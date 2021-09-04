@@ -66,7 +66,7 @@ router.post("/logout", async (req, res, next) => {
   res.sendStatus(404);
 });
 
-// router.use(isLoggedIn);
+router.use(isLoggedIn);
 
 router.post("/password", async (req, res, next) => {
   try {
@@ -84,7 +84,7 @@ router.post("/password", async (req, res, next) => {
   }
 });
 
-// router.use(isAdmin);
+router.use(isAdmin);
 
 router.get("/", async (req, res, next) => {
   try {

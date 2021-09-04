@@ -44,7 +44,11 @@ router.get('/:id', async (req, res, next) => {
       res.json(account);
     }
   } catch (e) {
-    next(e);
+    if (e.message.includes("get account failed")) {
+      res.sendStatus(404);
+    } else {
+      next(e);
+    }
   }
 });
 
@@ -54,7 +58,11 @@ router.get("/", async (req, res, next) => {
     const accounts = await accountDAO.getUserAccounts(user);
     res.json(accounts);
   } catch (e) {
-    next(e);
+    if (e.message.includes("get accounts failed")) {
+      res.sendStatus(404);
+    } else {
+      next(e);
+    }
   }
 });
 
@@ -64,7 +72,11 @@ router.get("/stats", async (req, res, next) => {
     const accounts = await accountDAO.getUserAccountStats(user);
     res.json(accounts);
   } catch (e) {
-    next(e);
+    if (e.message.includes("get account failed")) {
+      res.sendStatus(404);
+    } else {
+      next(e);
+    }
   }
 });
 

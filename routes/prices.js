@@ -13,10 +13,21 @@ router.get("/", async (req, res, next) => {
     }
 });
 
+router.get("/:coinId/stats", async (req, res, next) => {
+    try {
+        const coinId = req.params.coinId;
+        const priceData = await pricesDAO.getCoinStats(coinId, 3);
+        res.json(priceData);
+    } catch (e) {
+        next(e);
+    }
+});
+
 router.get("/:id", async (req, res, next) => {
     try {
         const priceId = req.params.id;
-        return await pricesDAO.getPricesById(priceId);
+        const priceData = await pricesDAO.getPricesById(priceId);
+        res.json(priceData);
     } catch (e) {
         next(e);
     }
