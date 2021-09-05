@@ -26,12 +26,21 @@ module.exports.removePricesById = (id) => {
 module.exports.getCoinStats = (coinId, days) => {
     // const coinStats = Prices.findOne({ id: coinId }).lean();
     const coinStats = Prices.aggregate([{ $match: { id: coinId } },
+    {
+        $lookup: {
+            from: "coins",
+            localField: "id",
+            foreignField: "id",
+            as: "coin"
+        }
+    },
+    { $unwind: "$coin" },
     { $addFields: { prices_slice: { $slice: ["$prices_daily", -(days + 1)] } } },
-    { $project: { _id: 0, coinId: "$id", prices: { $cond: [{ $eq: [days, 1] }, "$prices_hourly", "$prices_slice"] } } },
+    { $project: { _id: 0, prices: { $cond: [{ $eq: [days, 1] }, "$prices_hourly", "$prices_slice"] }, coin: 1 } },
     { $addFields: { start: { $first: "$prices" }, end: { $last: "$prices" } } },
     { $addFields: { "startPrice": { $last: "$start" }, "endPrice": { $last: "$end" } } },
     { $addFields: { change: { $subtract: ["$endPrice", "$startPrice"] } } },
-    // { $project: { coinId: 1, change: 1 } },
+    { $project: { coin: 1, change: 1 } }, 
     ]);
     return coinStats;
 };
