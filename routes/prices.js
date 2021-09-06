@@ -56,39 +56,42 @@ router.use(isAdmin);
 router.post("/", async (req, res, next) => {
     try {
         const price = req.body;
+        if (!price || JSON.stringify(price) === "{}") {
+            res.status(400).send("price data is required");
+        } else {
         const newPrice = await pricesDAO.create(price);
         res.json(newPrice);
-    } catch (e) {
-        if (e.message.includes("create price failed")) {
-            res.sendStatus(400)
         }
+    } catch (e) {
         next(e);
     }
 });
 
 router.put("/:id", async (req, res, next) => {
     try {
-        const coinId = req.params.id;
-        if (!coinId) {
-            res.status(400).send('coin id is required');
+        const id = req.params.id;
+        const price = req.body;
+        if (!price || JSON.stringify(price) === "{}") {
+            res.status(400).send("price data is required");
         } else {
-            const result = await pricesDAO.updateById(coinId);
+            const result = await pricesDAO.updateById(id, price);
             if (!result) {
                 res.status(404).send('No match ID, no updates.');
             } else {
                 res.json(result);
             }
         }
-    } catch (error) {
-
+    } catch (e) {
+        next(e);
     }
 });
 
 router.delete("/:id", async (req, res, next) => {
     try {
-        const coin = await pricesDAO.removeById(req.params.id);
-        if (!coin) {
-            res.sendStatus(404);
+        const id = req.params.id;
+        const price = await pricesDAO.removeById(id);
+        if (!price) {
+            res.status(400).send("price id is required");
         } else {
             res.sendStatus(200);
         }

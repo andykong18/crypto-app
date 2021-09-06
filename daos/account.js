@@ -2,7 +2,8 @@ const Account = require("../models/account");
 
 module.exports = {};
 
-module.exports.create = (account) => {
+module.exports.create = (account, user) => {
+    account.userId = user._id;
     return Account.create(account);
 }
 
@@ -13,19 +14,6 @@ module.exports.getUserAccounts = async (user) => {
         } else {
             return await Account.find({ userId: user._id }).lean();
         }
-    } catch {
-        throw new Error("get accounts failed");
-    }
-}
-
-module.exports.getUserAccountStats = async () => {
-    try {
-        // if (user.roles.includes("admin")) {
-        const accounts = await Account.find().lean();
-        return accounts;
-        // } else {
-        //     return await Account.find({ userId: user._id }).lean();
-        // }
     } catch {
         throw new Error("get accounts failed");
     }
@@ -46,9 +34,8 @@ module.exports.getAccountById = async (user, account_id) => {
     }
 }
 
-
-module.exports.updateAccountById = (id, newData) => {
-    return Account.findOneAndUpdate({ _id: id }, newData, { new: true }).lean();
+module.exports.updateAccountById = (id, newData, user) => {
+    return Account.findOneAndUpdate({ _id: id, userId: user._id }, newData, { new: true });
 }
 
 module.exports.removeAccountById = (id) => {

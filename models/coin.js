@@ -8,5 +8,4 @@ const coinSchema = new mongoose.Schema({
   marketCapRank: { type: Number, required: true, unique: true }
 });
 
-
 module.exports = mongoose.model("coin", coinSchema);

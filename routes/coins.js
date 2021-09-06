@@ -13,15 +13,6 @@ router.get("/", async (req, res, next) => {
     }
 });
 
-router.get("/stats", async (req, res, next) => {
-    try {
-        const coin = await coinDAO.getAll();
-        res.json(coin);
-    } catch (e) {
-        next(e);
-    }
-});
-
 router.get('/:id', async (req, res, next) => {
     try {
         const coin = await coinDAO.getCoinById(req.params.id);
@@ -40,7 +31,11 @@ router.use(isAdmin);
 
 router.post("/", async (req, res, next) => {
     try {
-        const savedCoinData = await coinDAO.create(req.body);
+        const coin = req.body;
+        if (!coin || JSON.stringify(coin) === "{}") {
+            res.status(400).send("coin data is required");
+        } 
+        const savedCoinData = await coinDAO.create(coin);
         res.json(savedCoinData);
     } catch (e) {
         next(e);
@@ -51,7 +46,7 @@ router.put("/:id", async (req, res, next) => {
     try {
         const coin = req.body;
         if (!coin || JSON.stringify(coin) === "{}") {
-            res.status(400).send("coin id is required");
+            res.status(400).send("coin data is required");
         }
         const coinId = req.params.id;
         const result = await coinDAO.updateById(coinId, coin);
@@ -67,7 +62,8 @@ router.put("/:id", async (req, res, next) => {
 
 router.delete("/:id", async (req, res, next) => {
     try {
-        const coin = await coinDAO.removeById(req.params.id);
+        const coinId = req.params.id;
+        const coin = await coinDAO.removeById(coinId);
         if (!coin) {
             res.sendStatus(404);
         } else {

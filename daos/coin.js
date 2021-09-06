@@ -15,7 +15,7 @@ module.exports.getCoinById = (id) => {
 };
 
 module.exports.updateById = (id, newData) => {
-  return Coin.findOneAndUpdate({ id }, newData, { new: true }).lean();
+  return Coin.findOneAndUpdate({ _id: id }, newData, { new: true });
 };
 
 module.exports.removeById = (id) => {

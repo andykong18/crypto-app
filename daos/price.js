@@ -15,7 +15,7 @@ module.exports.getPricesById = (id) => {
 }
 
 module.exports.updatePricesById = (id, newData) => {
-    return Prices.findOneAndUpdate({ id }, newData, { new: true }).lean();
+    return Prices.findOneAndUpdate({ _id: id }, newData, { new: true });
 
 }
 
@@ -24,7 +24,6 @@ module.exports.removePricesById = (id) => {
 }
 
 module.exports.getCoinStats = (coinId, days) => {
-    // const coinStats = Prices.findOne({ id: coinId }).lean();
     const coinStats = Prices.aggregate([{ $match: { id: coinId } },
     {
         $lookup: {
@@ -40,7 +39,7 @@ module.exports.getCoinStats = (coinId, days) => {
     { $addFields: { start: { $first: "$prices" }, end: { $last: "$prices" } } },
     { $addFields: { "startPrice": { $last: "$start" }, "endPrice": { $last: "$end" } } },
     { $addFields: { change: { $subtract: ["$endPrice", "$startPrice"] } } },
-    { $project: { coin: 1, change: 1 } }, 
+    { $project: { coin: 1, change: 1 } },
     ]);
     return coinStats;
 };
